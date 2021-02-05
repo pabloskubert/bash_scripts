@@ -1,0 +1,29 @@
+#!/bin/bash
+
+case $SHELL in
+	/usr/bin/zsh | /bin/zsh)
+		ECHO_TO="$HOME/.zsh_aliases" ;;
+
+	/bin/bash)
+		ECHO_TO="$HOME/.bash_aliases" ;;
+esac
+
+NAME=$(basename $0)
+HELP=$(cat <<EOF
+	Use: $NAME [alias] command1 command2...
+
+	Examples:
+
+		$NAME nsudo sudo nano /etc/sudoers => alias nsudo="sudo nano /etc/sudoers"
+
+		$NAME passedit sudo nano /etc/passwd => alias passedit="sudo nano /etc/passwd"
+EOF
+)
+
+[ -z "$1" ] && echo "$HELP" && exit;
+
+ALIAS="$1"
+COMMAND=$(echo -e "$*" | sed "s/$1//")
+
+echo -e "alias $ALIAS=\"$COMMAND \"" >> "$ECHO_TO"
+builtin source "$ECHO_TO"
