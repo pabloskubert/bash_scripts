@@ -1,0 +1,27 @@
+#!/bin/bash
+[ -z "$1" ] && echo -e "Use: $(basename $0) [IP or URL] [0 - 1 ~ enable tor df to 1]" && exit;
+[ "$2" = "0" ] && PROXY="" || PROXY="-x 127.0.0.1:8118";
+
+PAGE_NAME="getpage_$RANDOM.html"
+SAVE_TO=/tmp/$PAGE_NAME
+
+printf "\n\t\t Getting page %s \n" "$1"
+HTTP_RETURN=$(curl -A "$(pickag)" -i -ks "$1" "$PROXY")
+HEADERS=$(echo -e "$HTTP_RETURN" | sed -n '1,15p')
+CONTENT=$(echo -e "$HTTP_RETURN" | sed -n '15,$ p')
+STATUS_CODE=$(echo -e "$HEADERS" | sed -n '1p' | cut -d " " -f2)
+
+cat <<EOF >> "$SAVE_TO"
+<meta type="author" content="Pablo Skubert">
+<pre style="background-color:blue; color:white; font-weight:bold; font-size:16px; padding:30px; overflow:scroll;">
+        <legend style="color: Chocolate">HTTP_HEADERS</legend>
+	$HEADERS
+	<img src="https://http.cat/$STATUS_CODE" alt="HTTP STATUS CODE  TIP" width="615" height="400">
+</pre>
+	$CONTENT
+EOF
+
+printf "\n\t\t Openning browser..."
+
+# Change this to your favorite browser
+chromium "$SAVE_TO"
