@@ -1,0 +1,30 @@
+#!/bin/bash
+LIST_FILE="$HOME/tools/RandomAgent/user-agents.txt"
+[ ! -z "$1" ] && END_INT="$1" || END_INT=10;
+[ "$2" == "-v" ] && VERBOSE="1" || VERBOSE="0";
+
+if [ "$1" == "--help" -o "$1" == "-h" ]
+then
+    echo -e "\n\tUse: $0 [INTERATIONS default 10] \n\t-v to enable verbose mode\n"
+    exit;
+else
+    INTERATIONS="$END_INT"
+fi
+
+function log() {
+    STR="$1"
+    [ "$VERBOSE" == "1" ] && echo -e "\n\t$STR"; 
+}
+
+[ ! -f "$LIST_FILE" ] && echo -e "\n\t[Error] User agents list not found, put it in $HOME/tools/RandomAgent with name \"user-agents.txt\".\n" && exit;
+
+LEN=$(wc -l "$LIST_FILE" | cut -d " " -f1)
+
+log "Starting interaction, init[1] end [$INTERATIONS]"
+for i in `seq 1 $INTERATIONS`; do
+    FROM_LINE=$(shuf -i 1-"$LEN" -n 1)
+done
+
+log "Getting user-agent by line $FROM_LINE nº from the file $LIST_FILE"
+# get user agent from list by line number
+sed "$FROM_LINE q; d" "$LIST_FILE"
