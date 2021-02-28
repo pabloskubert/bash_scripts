@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+ cat <<EOF 
+	Uso: $(basename $0) [site_alvo]
+
+	Pega todos os cookies que o servidor retorna e printa no stdout
+EOF
+exit;
+fi
+
+curl -I -ks  "$1" | sed -n '/Set-Cookie: */Ip' | sed 's/Set-Cookie://Ig' | cut -d ';' -f1 | tr -d ' '
